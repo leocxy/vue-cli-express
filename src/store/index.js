@@ -39,7 +39,7 @@ let store = new Vuex.Store({
 			{name: 'valid', url: process.env.VUE_APP_URL + '/api/shopify/valid'}
 		],
 		snackbar: {
-			show: true,
+			show: false,
 			message: 'Here is test snackbar'
 		},
 	},
