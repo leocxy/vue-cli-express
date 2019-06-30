@@ -1,4 +1,4 @@
-# shopify products live stock
+# Shopify public app scaffold
 
 This Project include two apps. Frontend is vue + webpack dev server. Then backend is express.
 
