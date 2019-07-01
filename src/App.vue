@@ -70,7 +70,7 @@ export default {
 		// Check Open from shopify embedded app or not
 		if (window.self != window.top) {
 			// valid request from backend
-			this.$http.get('/api/shopify/valid' + window.self.location.search).then((res) => {
+			this.$http.get(this.getRestfulApi('valid') + window.self.location.search).then((res) => {
 				let data = res.data;
 				if (data.state) {
 					this.invalidStore(data);

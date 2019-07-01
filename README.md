@@ -1,10 +1,11 @@
 # Shopify public app scaffold
 
-This Project include two apps. Frontend is vue + webpack dev server. Then backend is express.
+This Project include two apps. Frontend is vue + webpack dev server. Then backend is express. Using NeDB as NOSQL.
 
 - Frontend Root folder is ./src
 - Frontend Template folder is ./public
 - Backend Root folder is ./srv
+- Config File .env
 
 ## Project setup
 ```

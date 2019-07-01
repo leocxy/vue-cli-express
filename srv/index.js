@@ -11,6 +11,8 @@ export default (app, http) => {
   app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
     next();
   });
 
@@ -19,22 +21,29 @@ export default (app, http) => {
   app.use(express.urlencoded({extended: true}))
 
   // Session
-  app.use(session({
+  let session_options = {
     secret: process.env.SHOPIFY_API_SECRET,
     resave: true,
-    saveUninitialized: true
-  }))
+    saveUninitialized: true,
+    proxy: true,
+  }
+  // Using Cookie Secure
+  if (app.get('env') == 'production') {
+    app.set('trust proxy', 1)
+    session_options = Object.assign(session_options, {cookie: { secure: true }})
+  }
+  app.use(session(session_options));
+
 
   // Shopify App
   app.use('/shopify', require('./router/shopify.js'));
 
-  // Custom Stuff
-  app.use('/product', require('./router/product.js'));
-  app.use('/playground', require('./router/playground.js'));
+  // Example Api
+  app.use('/shop', require('./router/shop.js'));
 
   // 404
   app.use((req, res, next) => {
-    return res.status(404).send('Unknow Url')
+    return res.sendStatus(404);
   });
 
   // app.use(express.json());

@@ -1,14 +1,15 @@
+'use strict'
 // shopify.js - Shopify Auth route module
 import nonce from 'nonce';
 import crypto from 'crypto';
 import cookie from 'cookie';
 import request from 'request-promise';
 import querystring from 'querystring'
-import lowdb from 'lowdb';
 
 let express = require('express');
-let router = express.Router();
-let conf = require('../conf/index.js');
+let router  = express.Router();
+let conf    = require('../conf/index.js');
+let db      = require('../conf/nedb.js');
 
 // Install
 router.get('/', (req, res) => {
@@ -68,31 +69,34 @@ router.get('/callback', (req, res) => {
       request.post(tokenRequestUrl, {json: tokenPayload}).then((tokenRes) => {
         // Store shop and token
         let token = tokenRes.access_token;
-        let fileSync = require('lowdb/adapters/FileSync');
-        let db = lowdb(new fileSync('shop.json'));
 
-        db.defaults({shops: []}).write();
+        db.shop.findOne({id: shop}, (err, ret) => {
+          // Callback
+          let getShop = (err, ret) => {
+            // Get Shop info
+            let shopRequestUrl = `https://${shop}/admin/api/${conf.version}/shop.json`
+            request.get(shopRequestUrl, {headers: {'X-Shopify-Access-Token': token}}).then((response) => {
+              // keep shop info
+              response = JSON.parse(response).shop
+              db.shop.update({id: shop}, {$set: {domain: response.domain, scopes: conf.scopes, data: response }}, (err, ret) => {
+                return res.redirect(`https://${shop}/admin/apps`);
+              });
 
-        if (!db.get('shops').find({id: shop}).value()) {
-          db.get('shops').push({id: shop, token: token}).write();
-        } else {
-          db.get('shops').find({id: shop}).assign({token: token}).write();
-        }
+              return null
+            }).catch((err) => {
+              res.status(err.statusCode).send(err.error.error_description);
+            })
+          }
 
-        // Get store info
-        let requestUrl = 'https://' + shop + '/admin/api/' + conf.version + '/shop.json';
-        request.get(requestUrl, {headers: {'X-Shopify-Access-Token': token}}).then((response) => {
-          response = JSON.parse(response)['shop']
-          db.get('shops').find({id: shop}).assign({domain: res.domain, scopes: conf.scopes}).write();
-          // redirect back to shopify admin
-          return res.redirect('https://' + shop + '/admin/apps');
-        }).catch((error) => {
-          return res.status(error.statusCode).send(error.error.error_description);
+          if (ret === null) {
+            db.shop.insert({id: shop, token: token}, getShop)
+          } else {
+            db.shop.update({id: shop}, {$set: {token: token}}, getShop)
+          }
         });
-
         return null
-      }).catch((error) => {
-        res.status(error.statusCode).send(error.error.error_description);
+      }).catch((err) => {
+        res.status(err.statusCode).send(err.error.error_description);
       });
     }
 });
@@ -121,25 +125,22 @@ router.get('/valid', (req, res) => {
 
     if (!hashEquals) {
       extra = 'HMAC validation failed';
-    } else {
-      // Valid Install Or not
-      let fileSync = require('lowdb/adapters/FileSync');
-      let db = lowdb(new fileSync('shop.json'));
-      db.defaults({shops: []}).write();
+      return res.json({state, message, extra});
+    }
 
-      if (!db.get('shops').find({id: shop}).value()) {
+    // Valid Install Or not
+    db.shop.findOne({id: shop}, (err, ret) => {
+      if (ret === null) {
         extra = 'Invalid Shopify Store';
         state = 401;
       } else {
-        // set the session
         req.session.shop = shop;
         message = 'Thank you for using our app!';
         state = 0;
       }
-    }
+      res.json({state, message, extra});
+    });
   }
-
-  res.json({state, message, extra});
 });
 
 module.exports = router;
