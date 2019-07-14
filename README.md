@@ -2,14 +2,54 @@
 
 This Project include two apps. Frontend is vue + webpack dev server. Then backend is express. Using NeDB as NOSQL.
 
-- Frontend Root folder is ./src
-- Frontend Template folder is ./public
-- Backend Root folder is ./srv
-- Config File .env
+### Structure
+
+```sh
+├── README.md
+├── babel.config.js
+├── db # NeDB
+│   └── app.db
+├── package.json
+├── public # Static File
+│   ├── favicon.ico
+│   └── index.html
+├── src # Vue
+│   ├── App.vue
+│   ├── assets
+│   │   └── logo.png
+│   ├── main.js
+│   ├── pages
+│   │   ├── index.vue
+│   │   └── install.vue
+│   ├── router
+│   │   └── index.js
+│   └── store
+│       ├── index.js
+│       └── mixins.js
+├── srv # Express directory
+│   ├── conf
+│   │   ├── index.js
+│   │   ├── nedb.js
+│   │   └── session-auth.js
+│   ├── index.js # Express entry file
+│   └── router
+│       ├── shop.js
+│       └── shopify.js
+├── vue.config.js
+└── .env.sample
+```
 
 ## Project setup
 ```
 yarn install
+```
+
+## Project config
+
+Create a .env file and change it
+```sh
+cp .env.sample .env
+vim .env
 ```
 
 ### Development Vue App
@@ -31,7 +71,7 @@ yarn express:run
 
 For `Development` environment, You can use webpack dev server instead of using Nginx. You can configruation the dev server at `vue.config.js`.
 
-For `Production` environment, You can use Nginx + Express + Static. Below is nginx config example.
+For `Production` environment, You can use Nginx + Express. Below is nginx config example.
 
 ## Nginx Config - Production
 
