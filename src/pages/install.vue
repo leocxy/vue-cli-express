@@ -10,11 +10,11 @@
 					<v-form lazy-validation ref="form">
 						<v-text-field 
 							prepend-icon="fa fa-store"
-							v-model="form.url" 
-							name="store_url" 
-							label="your-store.myshopify.com" 
+							v-model="form.url"
+							name="store_url"
+							label="your-store.myshopify.com"
 							type="text"
-							v-validate="'required|url:{required_protocol:false}'"
+							v-validate="getRules('store_url')"
 							v-on:keydown.enter.prevent="install"
 							:error-messages="errors.collect('store_url')"
 						></v-text-field>
@@ -31,15 +31,17 @@
 </template>
 
 <script>
-// Check here for more vee-validate rules
-// https://baianat.github.io/vee-validate/guide/rules.html#required-if
+import mixins from '../utils/mixins.js';
 
 export default {
 	name: 'install',
+	mixins: [mixins],
 	data: () => ({
-		valid: true,
 		form: {
 			url: '',
+		},
+		rules: {
+			store_url: {required: true, regex: /(.*).myshopify.com$/ }
 		}
 	}),
 	mounted() {

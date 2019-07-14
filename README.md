@@ -8,38 +8,52 @@ This Project include two apps. Frontend is vue + webpack dev server. Then backen
 ### Structure
 
 ```sh
+.
+├── .env
+├── .env.sample
+├── .gitignore
 ├── README.md
 ├── babel.config.js
 ├── db # NeDB
-│   └── app.db
+│   ├── .gitignore
+├── jest.config.js
 ├── package.json
 ├── public # Static File
 │   ├── favicon.ico
 │   └── index.html
-├── src # Vue
+├── src # Vue source files
 │   ├── App.vue
-│   ├── assets
-│   │   └── logo.png
 │   ├── main.js
 │   ├── pages
 │   │   ├── index.vue
 │   │   └── install.vue
+│   ├── plugins
+│   │   ├── axios.js
+│   │   ├── index.js
+│   │   ├── lodash.js
+│   │   └── vuetify.js
 │   ├── router
 │   │   └── index.js
-│   └── store
-│       ├── index.js
+│   ├── store
+│   │   └── index.js
+│   └── utils
 │       └── mixins.js
-├── srv # Express directory
+├── srv # Express files
 │   ├── conf
 │   │   ├── index.js
 │   │   ├── nedb.js
 │   │   └── session-auth.js
-│   ├── index.js # Express entry file
+│   ├── index.js
 │   └── router
 │       ├── shop.js
 │       └── shopify.js
+├── tests # Jest Test
+│   └── unit
+│       ├── .eslintrc.js
+│       ├── App.spec.js
+│       └── Home.spec.js
 ├── vue.config.js
-└── .env.sample
+└── yarn.lock
 ```
 
 ## Project setup
@@ -68,6 +82,21 @@ yarn express
 ### Start express in production mode
 ```
 yarn express:run
+```
+
+### Run Jest Testing
+```
+yarn test:unit
+```
+
+### Run Jest Testing with coverage
+```
+yarn test:unit --coverage
+```
+
+### Run Single File Testing
+```
+yarn test:unit tests/unit/App.spec.js
 ```
 
 ## How to deploy?
@@ -118,3 +147,5 @@ server {
 For more configration reference with `vue.config.js`. See [Configuration Reference](https://cli.vuejs.org/config/).
 
 For more configration reference with `Nginx`. See [Documentation](https://docs.nginx.com/)
+
+For more information about `Vue testing`. See [Vue testing handbook](https://lmiller1990.github.io/vue-testing-handbook/simulating-user-input.html#a-real-world-example)

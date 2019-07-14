@@ -1,3 +1,4 @@
+'use strict'
 // Global varaibles
 module.exports = {
 	apiKey: process.env.SHOPIFY_API_KEY,

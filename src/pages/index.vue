@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import mixins from '../store/mixins'
-import { mapState, mapMutations } from 'vuex'
+import mixins from '../utils/mixins'
+import { mapMutations } from 'vuex'
 
 export default {
 	name: 'home',
@@ -50,8 +50,8 @@ export default {
 	},
 	methods: {
 		getShop: function() {
-			this.$http.get(this.getRestfulApi('shop_info')).then((res) => {
-				this.toggleSnackbar({show: true, message: 'Get Shop Info'});
+			this.$http.get(this.$store.getters('shop_info')).then((res) => {
+				this.toggleSnackbar({show: true, message: res.data.domain });
 			}).catch((err) => {
 				console.error(err);
 			});
@@ -59,7 +59,7 @@ export default {
 		postData: function() {
 			this.$validator.validateAll().then(valid => {
 				if (valid) {
-					this.$http.post(this.getRestfulApi('shop_info'), this.form).then((res) => {
+					this.$http.post(this.$store.getters('shop_info'), this.form).then((res) => {
 						this.toggleSnackbar({show: true, message: 'Posted!'});
 						this.post = res.data.post.text;
 					}).catch((err) => {

@@ -1,17 +1,18 @@
 {
-  "name": "shopify-app",
+  "name": "shopify-app-scaffold",
   "version": "0.1.0",
   "private": true,
-  "license" : [
-    {"type": "MIT", "url": "https://www.opensource.org/licenses/mit-license.php"}
-  ],
+  "description": "This Project include two apps. Frontend is vue + webpack dev server. Then backend is express. Using NeDB as NOSQL.",
+  "author": "Leo Chen",
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "express": "vue-cli-service express:watch",
-    "express:run": "vue-cli-service express:run"
+    "express:run": "vue-cli-service express:run",
+    "test:unit": "vue-cli-service test:unit"
   },
+  "main": "src/main.js",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.2.0",
     "apollo-cache-inmemory": "^1.6.2",
@@ -38,9 +39,13 @@
     "@shopify/app-bridge": "^1.6.4",
     "@vue/cli-plugin-babel": "^3.8.0",
     "@vue/cli-plugin-eslint": "^3.8.0",
+    "@vue/cli-plugin-unit-jest": "^3.9.0",
     "@vue/cli-service": "^3.8.0",
+    "@vue/test-utils": "1.0.0-beta.29",
     "axios": "^0.19.0",
+    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
+    "babel-jest": "^23.6.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "express-session": "^1.16.2",
@@ -65,7 +70,9 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {},
+    "rules": {
+      "no-console": "off"
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }
@@ -78,5 +85,20 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "bugs": {
+    "url": "https://github.com/leocxy/vue-cli-express/issues"
+  },
+  "homepage": "https://github.com/leocxy/vue-cli-express#readme",
+  "keywords": [
+    "Shopify Public App",
+    "Vue",
+    "Vue Cli",
+    "Express"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leocxy/vue-cli-express.git"
+  }
 }

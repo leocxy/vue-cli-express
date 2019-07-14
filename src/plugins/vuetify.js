@@ -1,0 +1,28 @@
+'use strict'
+import Vuetify from 'vuetify/lib'
+import VeeValidate from 'vee-validate'
+// Vuetify Css
+import 'vuetify/src/stylus/app.styl'
+import '@fortawesome/fontawesome-free/css/all.css'
+
+export default {
+  install: (Vue, options) => {
+    options = options || {
+      // theme: {
+      //  primary: "#ee44aa",
+      //  secondary: '#424242',
+      //  accent: '#82B1FF',
+      //  error: '#FF5252',
+      //  info: '#2196F3',
+      //  success: '#4CAF50',
+      //  warning: '#FFC107'
+      // },
+      options: {
+        customProperties: true
+      },
+      iconfont: 'fa',
+    }
+    Vue.use(Vuetify, options)
+    Vue.use(VeeValidate)
+  }
+}

@@ -18,11 +18,11 @@
 </template>
 
 <script>
-import mixins from './store/mixins'
+import mixins from './utils/mixins'
 import { mapState, mapMutations } from 'vuex'
 
 import Loading from 'vue-loading-overlay';
-import 'vue-loading-overlay/dist/vue-loading.css';
+import 'vue-loading-overlay/dist/vue-loading.css'
 
 import Home from './pages/index.vue'
 import Install from './pages/install.vue'
@@ -56,30 +56,33 @@ export default {
 		})
 	},
 	methods: {
-		validStore: function(data) {
+		validStore: function() {
 			this.loading.isActive = false;
 			this.currentView = 'home';
 		},
-		invalidStore: function(data) {
+		invalidStore: function() {
 			this.loading.isActive = false;
 			this.currentView = 'install';
+		},
+		ajaxCheck: function() {
+			// valid request from backend
+			this.$http.get(this.$store.getters.getApi('valid') + window.self.location.search).then((res) => {
+				let data = res.data;
+				if (data.state) {
+					this.invalidStore();
+				} else {
+					this.validStore();
+				}
+			}).catch((err) => {
+				console.error(err);
+			});
 		},
 		...mapMutations(['toggleSnackbar'])
 	},
 	mounted() {
 		// Check Open from shopify embedded app or not
 		if (window.self != window.top) {
-			// valid request from backend
-			this.$http.get(this.getRestfulApi('valid') + window.self.location.search).then((res) => {
-				let data = res.data;
-				if (data.state) {
-					this.invalidStore(data);
-				} else {
-					this.validStore(data);
-				}
-			}).catch((err) => {
-				console.error(err);
-			});
+			this.ajaxCheck()
 		} else {
 			this.invalidStore();
 		}
