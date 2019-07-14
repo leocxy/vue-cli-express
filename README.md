@@ -2,6 +2,9 @@
 
 This Project include two apps. Frontend is vue + webpack dev server. Then backend is express. Using NeDB as NOSQL.
 
+![issues](https://img.shields.io/github/issues/leocxy/vue-cli-express.svg)
+![license](https://img.shields.io/github/license/leocxy/vue-cli-express.svg)
+
 ### Structure
 
 ```sh
