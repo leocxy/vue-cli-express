@@ -9,49 +9,31 @@ This Project include two apps. Frontend is vue + webpack dev server. Then backen
 
 ```sh
 .
-├── .env
 ├── .env.sample
-├── .gitignore
 ├── README.md
 ├── babel.config.js
-├── db # NeDB
-│   ├── .gitignore
+├── db # nedb
 ├── jest.config.js
 ├── package.json
-├── public # Static File
+├── public # webpack html
 │   ├── favicon.ico
 │   └── index.html
-├── src # Vue source files
+├── src # vue app
 │   ├── App.vue
 │   ├── main.js
 │   ├── pages
-│   │   ├── index.vue
-│   │   └── install.vue
 │   ├── plugins
-│   │   ├── axios.js
-│   │   ├── index.js
-│   │   ├── lodash.js
-│   │   └── vuetify.js
 │   ├── router
-│   │   └── index.js
 │   ├── store
-│   │   └── index.js
 │   └── utils
-│       └── mixins.js
-├── srv # Express files
+├── srv # express
 │   ├── conf
-│   │   ├── index.js
-│   │   ├── nedb.js
-│   │   └── session-auth.js
 │   ├── index.js
-│   └── router
-│       ├── shop.js
-│       └── shopify.js
-├── tests # Jest Test
-│   └── unit
-│       ├── .eslintrc.js
-│       ├── App.spec.js
-│       └── Home.spec.js
+│   ├── middleware
+│   ├── router
+│   ├── schema
+│   └── utils
+├── tests
 ├── vue.config.js
 └── yarn.lock
 ```

@@ -1,67 +1,59 @@
 'use strict'
-import { ApolloClient } from 'apollo-client'
-import fetch from 'node-fetch';
-import { createHttpLink } from 'apollo-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import gql from 'graphql-tag';
+import { GraphQLClient } from 'graphql-request'
 // import _ from 'lodash';
 
-let router = require('express').Router()
-let conf   = require('../conf/index')
-let db     = require('../conf/nedb')
-let auth   = require('../conf/session-auth')
+let router   = require('express').Router(),
+conf         = require('../conf/index'),
+db           = require('../conf/nedb'),
+session_auth = require('../middleware/session-auth'),
+proxy_auth   = require('../middleware/proxy-auth')
+
+// Hack override
+if ('development' === process.env.NODE_ENV) {
+    proxy_auth = (req, res, next) => {
+        req.query['shop'] = conf.devStore;
+        return next()
+    }
+
+    session_auth = (req, res, next) => {
+		req.session.shop = conf.devStore;
+		return next()
+    }
+}
+
+// Middleware
+router.use(require('express').json())
+router.use(require('express').urlencoded({extended: true}))
 
 // Show Shopify Shop Info
-router.get('/info', (req, res) => {
-	// From Shopify Admin
-	if (req.session.shop) {
-		return db.shop.findOne({id: req.session.shop}, (err, ret) => {
-			ret === null ? res.sendStatus(400) : res.json(ret)
-		})
+router.get('/info', proxy_auth, (req, res) => {
+	let { shop } = req.query,
+	queryCallback = (err, ret) => {
+		null === ret ? res.sendStatus(401) : res.json(ret);
 	}
 
-	// From Storefront Proxy
-	return db.shop.findOne({domain: req.header('x-forwarded-host')}, (err, ret) => {
-		ret === null ? res.sendStatus(400) : res.json(ret)
-	});
+	return db.shop.findOne({id: shop}, queryCallback);
 });
 
 // Middle Auth
-router.post('/info', auth, (req, res) => {
-	let postData = req.body;
-
-	db.shop.findOne({id: req.session.shop}, (err, ret) => {
-		let link = createHttpLink({
-			uri: `https://${req.session.shop}/admin/api/${conf.version}/graphql.json`,
-			fetch, 
-			headers: {
-				'X-Shopify-Access-Token': ret.token
-			}
-		});
-		let client = new ApolloClient({
-			link: link,
-			cache: new InMemoryCache(),
-			ssrMode: true
-		});
-
-		let query, json;
-
-		query = gql`{shop {
-			name
-			email
-			url
-			description
-			id
-			contactEmail
-			currencyCode
-		}}`
-
-		client.query({query: query}).then((response) => {
-			res.json({post: postData, shop: response.data.shop})
-		}).catch((err) => {
-			res.status(500).json(err);
+router.post('/info', session_auth, (req, res) => {
+	let postData = req.body, client,
+	stepTwo = (ret) => {
+		client = new GraphQLClient(`https://${ret.id}/admin/api/${conf.version}/graphql.json`, {
+			headers: {'X-Shopify-Access-Token' : ret.token}
 		})
-	});
+		client.request(require('../schema/shop')()).then(({shop}) => {
+			res.json({post: postData, shop: shop})
+		}).catch(err => {
+			console.error(err)
+			res.status(500).json(err)
+		})
+	},
+	stepOne = (err, ret) => {
+		null === ret ? res.sendStatus(401) : stepTwo(ret)
+	}
+
+	db.shop.findOne({id: req.session.shop}, stepOne);
 });
 
 module.exports = router

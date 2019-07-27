@@ -5,5 +5,5 @@ module.exports = (req, res, next) => {
 		return next()
 	}
 
-	return res.sendStatus(401)
+	return res.sendStatus(403)
 }
