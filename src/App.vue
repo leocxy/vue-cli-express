@@ -73,8 +73,9 @@ export default {
 				} else {
 					this.validStore();
 				}
-			}).catch((err) => {
-				console.error(err);
+			}).catch((e) => {
+				this.invalidStore();
+				throw Error("Something went wrong", e)
 			});
 		},
 		...mapMutations(['toggleSnackbar'])

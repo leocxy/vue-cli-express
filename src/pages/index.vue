@@ -14,15 +14,16 @@
 							name="post_text"
 							label="The text you want to post to backend"
 							type="text"
-							v-validate="'required'"
+							v-validate="getRules('post_text')"
 							v-on:keydown.enter.prevent="postData"
 							:error-messages="errors.collect('post_text')"
+							data-post_text
 						></v-text-field>
 					</v-form>
 				</v-card-text>
 				<v-card-actions>
 					<v-spacer></v-spacer>
-					<v-btn color="primary" @click="postData()">Send</v-btn>
+					<v-btn color="primary" @click="validate()">Send</v-btn>
 					<v-btn color="default" @click="getShop()">Get Shop</v-btn>
 				</v-card-actions>
 			</v-card>
@@ -39,9 +40,11 @@ export default {
 	name: 'home',
 	mixins: [mixins],
 	data: () => ({
-		valid: true,
 		form: {
 			text: '',
+		},
+		rules: {
+			post_text: 'required'
 		},
 		post: 'Wait for response',
 	}),
@@ -50,21 +53,24 @@ export default {
 	},
 	methods: {
 		getShop: function() {
-			this.$http.get(this.$store.getters('shop_info')).then((res) => {
+			this.$http.get(this.$store.getters.getApi('shop_info')).then((res) => {
 				this.toggleSnackbar({show: true, message: res.data.domain });
-			}).catch((err) => {
-				console.error(err);
+			}).catch((e) => {
+				throw Error("Something went wrong", e)
 			});
 		},
 		postData: function() {
+			this.$http.post(this.$store.getters.getApi('shop_info'), this.form).then((res) => {
+				this.toggleSnackbar({show: true, message: 'Posted!'});
+				this.post = res.data.post.text;
+			}).catch((e) => {
+				throw Error("Something went wrong", e)
+			});
+		},
+		validate: function() {
 			this.$validator.validateAll().then(valid => {
 				if (valid) {
-					this.$http.post(this.$store.getters('shop_info'), this.form).then((res) => {
-						this.toggleSnackbar({show: true, message: 'Posted!'});
-						this.post = res.data.post.text;
-					}).catch((err) => {
-						console.error(err);
-					});
+					this.postData()
 				}
 			});
 		},

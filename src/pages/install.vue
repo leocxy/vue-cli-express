@@ -56,7 +56,7 @@ export default {
 					window.location.href = url;
 				}
 			});
-		},
+		}
 	}
 }
 </script>
