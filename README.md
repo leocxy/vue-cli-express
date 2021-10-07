@@ -1,3 +1,9 @@
+# Important
+
+Hello, this project was deprecated. Now you can you generate the node.js project using [Shopify CLI](https://github.com/Shopify/shopify-cli). You can find the offical project [here](https://github.com/Shopify/shopify-app-node). It is using Koa(https://koajs.com/).
+
+You are welcome to have a look at this project if this can inspire you.
+
 # Shopify public app scaffold
 
 This Project include two apps. Frontend is vue + webpack dev server. Then backend is express. Using NeDB as NOSQL.
